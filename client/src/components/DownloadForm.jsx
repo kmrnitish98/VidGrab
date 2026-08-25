@@ -5,6 +5,8 @@ import { useState } from 'react';
 import Spinner from './Spinner';
 import StatusMessage from './StatusMessage';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function DownloadForm() {
   const [url, setUrl] = useState('');
   const [status, setStatus] = useState(null); // { type: 'success'|'error'|'loading', message: '' }
@@ -23,7 +25,7 @@ function DownloadForm() {
 
     try {
       // 1. Check if the URL is valid
-      const response = await fetch('http://localhost:5000/api/download', {
+      const response = await fetch(`${API_URL}/api/download`,  {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim(), checkOnly: true }),
@@ -39,7 +41,7 @@ function DownloadForm() {
       // 2. Start the actual download using the browser's native downloader
       setStatus({ type: 'success', message: 'Download started! The file will be saved by your browser when ready. This may take a few minutes for large files.' });
       
-      const downloadUrl = `http://localhost:5000/api/download?url=${encodeURIComponent(url.trim())}`;
+      const downloadUrl = `${API_URL}/api/download?url=${encodeURIComponent(url.trim())}`;
       window.location.href = downloadUrl;
       
       // Clear the input after starting

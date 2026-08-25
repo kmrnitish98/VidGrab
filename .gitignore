@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+*.log
+test_stream.mp4
+yt-dlp.exe
+downloads/

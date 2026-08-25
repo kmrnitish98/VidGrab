@@ -1,0 +1,21 @@
+{
+  "name": "video-downloader-server",
+  "version": "1.0.0",
+  "description": "Backend server for VidGrab video downloader",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
+    "axios": "^1.19.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.2",
+    "mime-types": "^3.0.2"
+  }
+}

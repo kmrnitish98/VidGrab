@@ -11,7 +11,9 @@ const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB
 const DOWNLOAD_TIMEOUT = 1800 * 1000; // 30 minutes
 
 // Path to yt-dlp binary (assumes it is in the server folder)
-const YTDLP_PATH = path.join(__dirname, '..', 'yt-dlp.exe');
+const YTDLP_PATH = process.platform === 'win32'
+  ? path.join(__dirname, '..', 'yt-dlp.exe')
+  : path.join(__dirname, '..', 'yt-dlp');
 
 /**
  * Streams a video directly to the Express response using yt-dlp.
@@ -21,11 +23,12 @@ const YTDLP_PATH = path.join(__dirname, '..', 'yt-dlp.exe');
 async function downloadYoutube(url) {
   // Ensure yt-dlp.exe is available
   if (!fs.existsSync(YTDLP_PATH)) {
+    const binaryName = process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp';
+
     throw new Error(
-      'yt-dlp.exe not found in server directory. ' +
-      'Please download it from https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe ' +
-      'and place it inside the video-downloader/server folder.'
-    );
+      `${binaryName} not found. ` +
+      'Please make sure yt-dlp is installed and available on the server.'
+      );
   }
 
   const ext = 'mp4';

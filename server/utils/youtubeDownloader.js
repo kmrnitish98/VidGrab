@@ -15,6 +15,10 @@ const YTDLP_PATH = process.platform === 'win32'
   ? path.join(__dirname, '..', 'yt-dlp.exe')
   : path.join(__dirname, '..', 'yt-dlp');
 
+const DENO_PATH = process.platform === 'win32'
+  ? null
+  : path.join(process.env.HOME || '', '.deno', 'bin', 'deno');
+
 /**
  * Streams a video directly to the Express response using yt-dlp.
  * @param {string} url - The video URL
@@ -35,7 +39,13 @@ async function downloadYoutube(url) {
   
   return new Promise((resolve, reject) => {
     // 1. First, fetch the video title
-    const titleProcess = spawn(YTDLP_PATH, ['--get-title', url]);
+    const titleArgs = ['--get-title', url];
+
+       if (process.platform !== 'win32' && fs.existsSync(DENO_PATH)) {
+         titleArgs.unshift('--js-runtimes', `deno:${DENO_PATH}`);
+       }
+
+    const titleProcess = spawn(YTDLP_PATH, titleArgs);
     let title = 'video';
     
     titleProcess.stdout.on('data', (data) => {
@@ -50,12 +60,16 @@ async function downloadYoutube(url) {
 
       // 2. Stream the video to stdout
       const args = [
-        url,
-        '-f', 'best[ext=mp4]/best', // pre-merged format to allow stdout streaming
-        '-o', '-', // Output to stdout
-        '--no-playlist',
-        '--max-filesize', '500M' // Enforce max size in yt-dlp
-      ];
+          url,
+          '-f', 'best[ext=mp4]/best',
+          '-o', '-',
+          '--no-playlist',
+          '--max-filesize', '500M'
+        ];
+
+      if (process.platform !== 'win32' && fs.existsSync(DENO_PATH)) {
+        args.unshift('--js-runtimes', `deno:${DENO_PATH}`);
+      }
 
       const child = spawn(YTDLP_PATH, args);
       
